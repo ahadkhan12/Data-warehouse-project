@@ -1,13 +1,49 @@
-use master;
+/*
+===============================================================================
+Database and Schema Initialization Script
+===============================================================================
+Script Purpose:
+    This script initializes the core data warehouse environment. It switches 
+    to the master database, drops any existing database named 'DataWarehouse' 
+    to ensure a clean setup, creates a new 'DataWarehouse' database, and establishes 
+    the medallion architecture schemas: bronze, silver, and gold.
 
-Create database DataWarehose;
+WARNING:
+    Running this script drops the entire 'DataWarehouse' database if it exists.
+    All tables, views, stored procedures, and data will be permanently deleted.
+===============================================================================
+*/
 
-USE DataWarehose;
-
-create Schema bronze;
+USE master;
 GO
-create Schema silver;
+
+-- Drop database if it already exists to start fresh
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DataWarehouse')
+BEGIN
+    ALTER DATABASE DataWarehouse SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE DataWarehouse;
+END;
 GO
-create Schema gold;
 
+-- Create the clean DataWarehouse database
+CREATE DATABASE DataWarehouse;
+GO
 
+USE DataWarehouse;
+GO
+
+-- ====================================================================
+-- Create Medallion Architecture Schemas
+-- ====================================================================
+
+-- Schema for raw ingested source data
+CREATE SCHEMA bronze;
+GO
+
+-- Schema for cleansed, validated, and conformed data
+CREATE SCHEMA silver;
+GO
+
+-- Schema for aggregated, business-ready models and reporting tables
+CREATE SCHEMA gold;
+GO
