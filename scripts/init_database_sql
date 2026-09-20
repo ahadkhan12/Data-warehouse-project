@@ -1,1 +1,13 @@
+use master;
+
+Create database DataWarehose;
+
+USE DataWarehose;
+
+create Schema bronze;
+GO
+create Schema silver;
+GO
+create Schema gold;
+
 
